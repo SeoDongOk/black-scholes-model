@@ -5,6 +5,7 @@ Proof of the Black-Scholes equation, and a Black-Scholes model built in Python.
 - `proof/` — derivation of the Black-Scholes PDE
 - `black_scholes/` — a vectorized Black-Scholes-Merton pricer, greeks, and implied volatility
 - `examples/demo.py` — prices an option chain, inverts it back to a smile, prints the greeks
+- `examples/delta_hedge.py` — checks that delta hedging really does replicate the option
 - `GME.ipynb` — geometric Brownian motion paths
 
 ## Install
