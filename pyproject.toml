@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "black-scholes-model"
+version = "0.1.0"
+description = "A vectorized Black-Scholes-Merton pricer and greeks, on numpy and scipy"
+requires-python = ">=3.9"
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools]
+packages = ["black_scholes"]
