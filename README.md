@@ -6,6 +6,8 @@ Proof of the Black-Scholes equation, and a Black-Scholes model built in Python.
 - `black_scholes/` — a vectorized Black-Scholes-Merton pricer, greeks, and implied volatility
 - `examples/demo.py` — prices an option chain, inverts it back to a smile, prints the greeks
 - `examples/delta_hedge.py` — checks that delta hedging really does replicate the option
+- `black_scholes/elw.py` — KRX ELW conventions: conversion ratio, parity, gearing, screening guards
+- `examples/elw_screen.py` — screens an ELW candidate list on implied volatility
 - `GME.ipynb` — geometric Brownian motion paths
 
 ## Install
@@ -75,13 +77,36 @@ value on the forward, and the second-order greeks to zero.
 no-arbitrage bounds, so one bad row does not abort a whole chain. `price_bounds` reports
 those bounds directly.
 
+## ELW
+
+`black_scholes.elw` applies the KRX warrant conventions. One warrant settles for
+`conversion_ratio` units of the underlying, so price and every greek scale by that constant:
+
+```python
+from black_scholes import elw
+
+elw.assert_priceable(row["elwrght_exec_way"], row["kobarr"])   # 유럽형, no KO barrier
+iv = elw.implied_volatility(quote, S, K, T, r, q, conversion_ratio=100.0)
+```
+
+Two preconditions decide whether the model applies at all, and both are fields the exchange
+already publishes. An American warrant carries early-exercise value this model omits; a
+knock-out warrant is a barrier option, worth strictly less than the plain European value.
+`assert_priceable` makes each a hard failure rather than a silent mispricing.
+
+A third limit is not in the feed. Implied vol is only as precise as the price grid it is
+inverted from, and deep in the money the vega collapses toward the tick size. On a real
+KOSPI200 warrant quoted at 4,985 won with 17 days left, vega was 0.29 won per vol point
+against a 5 won tick: one tick moved the implied vol by 17 points. `iv_resolution` reports
+that span so a screen can drop the warrant instead of ranking rounding noise.
+
 ## Tests
 
 ```bash
 pytest
 ```
 
-141 tests. Prices are checked against textbook values and put-call parity; every greek is
+178 tests. Prices are checked against textbook values and put-call parity; every greek is
 checked against a central finite difference of the function below it. The pricing formula
 is separately cross-checked against a 4M-path Monte Carlo (all cases within 1.6 standard
 errors).

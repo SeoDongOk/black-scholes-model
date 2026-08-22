@@ -5,9 +5,10 @@ from .core import (
     delta, gamma, vega, theta, rho, vanna, vomma, charm, greeks,
 )
 from .implied_vol import implied_volatility, price_bounds
+from . import elw
 
 __all__ = [
     "CALL", "PUT", "forward", "d1", "d2", "price", "call_price", "put_price",
     "delta", "gamma", "vega", "theta", "rho", "vanna", "vomma", "charm",
-    "greeks", "implied_volatility", "price_bounds",
+    "greeks", "implied_volatility", "price_bounds", "elw",
 ]
